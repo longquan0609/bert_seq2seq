@@ -6,13 +6,22 @@ from torch.utils.data import Dataset, DataLoader
 from tqdm.std import TqdmWarning
 from bert_seq2seq import Tokenizer, load_chinese_base_vocab
 from bert_seq2seq import load_bert
+import argparse
 
-data_path = "./corpus/activities-data/小学语文_train.txt"
+
+parser = argparse.ArgumentParser()
+parser.add_help = True
+parser.add_argument('-p', '--epoch', dest='epoch', type=int, default=100, help='epoch round')
+parser.add_argument('-o', '--out', dest='out', type=str, default='./bert_multi_classify_model.bin', help='trained model location')
+
+args = parser.parse_args()
+
+data_path = "./corpus/activities-data/初中语文_train.txt"
 vocab_path = "./state_dict/roberta_wwm_vocab.txt"  # roberta模型字典的位置
 model_name = "roberta"  # 选择模型名字
 model_path = "./state_dict/roberta_wwm_pytorch_model.bin"  # roberta模型位置
-recent_model_path = "./bert_multi_classify_model.bin"  # 用于把已经训练好的模型继续训练
-model_save_path = "./bert_multi_classify_model.bin"
+recent_model_path = args.out # 用于把已经训练好的模型继续训练
+model_save_path =  args.out
 batch_size = 16
 lr = 1e-5
 
@@ -20,7 +29,7 @@ lr = 1e-5
 target = []
 
 # 获取分类
-with open("./corpus/activities-data/小学语文_name.txt", "r", encoding="utf-8") as fp:
+with open("./corpus/activities-data/初中语文_name.txt", "r", encoding="utf-8") as fp:
     ls = fp.readlines()
     for l in ls:
         target.append(l)
@@ -181,9 +190,10 @@ class Trainer:
 
 if __name__ == '__main__':
 
+    print(args.epoch, args.out)
     trainer = Trainer()
     # 迭代1000次
-    train_epoches = 100
+    train_epoches = args.epoch
     for epoch in range(train_epoches):
         # 训练一个epoch
         trainer.train(epoch)
