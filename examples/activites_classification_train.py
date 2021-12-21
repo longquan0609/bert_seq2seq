@@ -9,14 +9,21 @@ from bert_seq2seq import load_bert
 import argparse
 
 
+# 增加外部输入参数
 parser = argparse.ArgumentParser()
 parser.add_help = True
+# 训练轮数
 parser.add_argument('-p', '--epoch', dest='epoch', type=int, default=100, help='epoch round')
+# 输出模型的位置
 parser.add_argument('-o', '--out', dest='out', type=str, default='./bert_multi_classify_model.bin', help='trained model location')
+# 训练文档位置
+parser.add_argument('-t', '--train', dest='train', type=str, default='./corpus/activities-data/小学语文_train.txt')
+# 分类词典的位置
+parser.add_argument('-n', '--name', dest='name', type=str, default='./corpus/activities-data/小学语文_name.txt')
 
 args = parser.parse_args()
 
-data_path = "./corpus/activities-data/初中语文_train.txt"
+data_path = args.train
 vocab_path = "./state_dict/roberta_wwm_vocab.txt"  # roberta模型字典的位置
 model_name = "roberta"  # 选择模型名字
 model_path = "./state_dict/roberta_wwm_pytorch_model.bin"  # roberta模型位置
@@ -29,7 +36,7 @@ lr = 1e-5
 target = []
 
 # 获取分类
-with open("./corpus/activities-data/初中语文_name.txt", "r", encoding="utf-8") as fp:
+with open(args.name, "r", encoding="utf-8") as fp:
     ls = fp.readlines()
     for l in ls:
         target.append(l)
