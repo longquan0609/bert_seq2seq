@@ -7,6 +7,7 @@ from tqdm.std import TqdmWarning
 from bert_seq2seq import Tokenizer, load_chinese_base_vocab
 from bert_seq2seq import load_bert
 import argparse
+import json
 
 
 # 增加外部输入参数
@@ -27,22 +28,16 @@ data_path = args.train
 vocab_path = "./state_dict/roberta_wwm_vocab.txt"  # roberta模型字典的位置
 model_name = "roberta"  # 选择模型名字
 model_path = "./state_dict/roberta_wwm_pytorch_model.bin"  # roberta模型位置
-recent_model_path = args.out # 用于把已经训练好的模型继续训练
+recent_model_path = '' # 用于把已经训练好的模型继续训练
 model_save_path =  args.out
+
 batch_size = 16
 lr = 1e-5
 
 
-target = []
-
-# 获取分类
-with open(args.name, "r", encoding="utf-8") as fp:
-    ls = fp.readlines()
-    for l in ls:
-        target.append(l)
+target =  json.load(open(args.name, 'r', encoding='utf-8'))
 
 print(len(target))
-
 
 # 加载字典
 word2idx = load_chinese_base_vocab(vocab_path)
