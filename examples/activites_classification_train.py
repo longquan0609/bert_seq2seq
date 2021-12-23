@@ -18,9 +18,9 @@ parser.add_argument('-p', '--epoch', dest='epoch', type=int, default=100, help='
 # 输出模型的位置
 parser.add_argument('-o', '--out', dest='out', type=str, default='./bert_multi_classify_model.bin', help='trained model location')
 # 训练文档位置
-parser.add_argument('-t', '--train', dest='train', type=str, default='./corpus/activities-data/小学语文_train.txt')
+parser.add_argument('-t', '--train', dest='train', type=str, default='./corpus/activities-data/train.txt')
 # 分类词典的位置
-parser.add_argument('-n', '--name', dest='name', type=str, default='./corpus/activities-data/小学语文_name.txt')
+parser.add_argument('-n', '--name', dest='name', type=str, default='./corpus/activities-data/name.txt')
 
 args = parser.parse_args()
 
