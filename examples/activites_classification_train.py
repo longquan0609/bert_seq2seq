@@ -8,6 +8,9 @@ from bert_seq2seq import Tokenizer, load_chinese_base_vocab
 from bert_seq2seq import load_bert
 import argparse
 import json
+import os
+
+from bert_seq2seq.model import bert_model
 
 
 # 增加外部输入参数
@@ -28,7 +31,7 @@ data_path = args.train
 vocab_path = "./state_dict/roberta_wwm_vocab.txt"  # roberta模型字典的位置
 model_name = "roberta"  # 选择模型名字
 model_path = "./state_dict/roberta_wwm_pytorch_model.bin"  # roberta模型位置
-recent_model_path = '' # 用于把已经训练好的模型继续训练
+recent_model_path = args.out # 用于把已经训练好的模型继续训练
 model_save_path =  args.out
 
 batch_size = 16
@@ -37,7 +40,7 @@ lr = 1e-5
 
 target =  json.load(open(args.name, 'r', encoding='utf-8'))
 
-print(len(target))
+print(len(target), args)
 
 # 加载字典
 word2idx = load_chinese_base_vocab(vocab_path)
@@ -128,8 +131,13 @@ class Trainer:
         print("device: " + str(self.device))
         # 定义模型
         self.bert_model = load_bert(word2idx, model_name=model_name, model_class="cls", target_size=len(target))
-        # 加载预训练的模型参数～
-        self.bert_model.load_pretrain_params(model_path)
+        # 判断是不是从最近的训练的基础上继续训练
+        if recent_model_path  is not None and os.path.exists(recent_model_path):
+            # 加载已训练好的参数
+            self.bert_model.load_all_params(recent_model_path)
+        else:
+            # 加载预训练的模型参数～
+            self.bert_model.load_pretrain_params(model_path)
         # 将模型发送到计算设备(GPU或CPU)
         self.bert_model.set_device(self.device)
         # 声明需要优化的参数
@@ -191,8 +199,6 @@ class Trainer:
 
 
 if __name__ == '__main__':
-
-    print(args.epoch, args.out)
     trainer = Trainer()
     # 迭代1000次
     train_epoches = args.epoch
